@@ -9,7 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch --verbose",
     "lint": "eslint -c .eslintrc.js 'src/**/*.ts' 'src/**/*.tsx' index.ts",
-    "lint:fix": "eslint --fix -c .eslintrc.js 'src/**/*.ts' 'src/**/*.tsx' index.ts",
+    "lint:fix": "eslint --fix -c .eslintrc.js 'src/**/*.ts' 'src/**/*.tsx' 'src/*.ts' 'src/*.tsx'",
     "prettie": "prettier --check --config ./.prettierrc '**/*{ts,tsx}'",
     "prettier:fix": "prettier --write --config ./.prettierrc '**/*{ts,tsx}'",
     "tsc:watch": "tsc --watch --noEmit"
