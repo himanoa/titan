@@ -1,15 +1,11 @@
-import webpack from "webpack";
-import path from "path";
+const webpack = require("webpack");
+const path = require("path");
 
-const createConfig = (
-  mode: "development" | "production",
-  mainPlugin: webpack.Plugin[] = [],
-  rendererPlugin: webpack.Plugin[] = []
-): webpack.Configuration[] => {
+const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
   return [
     {
       target: "electron-main",
-      entry: "./src/main",
+      entry: { main: path.join(__dirname, "src", "main", "index.ts") },
       plugins: mainPlugin,
       output: {
         path: path.join(__dirname, "dist"),
@@ -27,7 +23,7 @@ const createConfig = (
     },
     {
       target: "electron-renderer",
-      entry: "./src/renderer/index.ts",
+      entry: "./src/renderer/index.tsx",
       plugins: rendererPlugin,
       output: {
         path: path.join(__dirname, "dist"),
@@ -45,4 +41,4 @@ const createConfig = (
     }
   ];
 };
-export default createConfig;
+module.exports = createConfig;
