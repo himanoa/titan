@@ -1,0 +1,8 @@
+{
+  "name": "titan",
+  "version": "0.0.1",
+  "description": "Titan is better markdown editor",
+  "main": "index.js",
+  "author": "himanoa <matsunoappy@gmail.com>",
+  "license": "MIT"
+}
