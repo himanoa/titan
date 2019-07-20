@@ -1,0 +1,7 @@
+{
+  "watch": ["src"],
+  "ext": "ts,tsx",
+  "ignore": ["src/**/*.spec.ts"],
+  "exec": "yarn build:dev && yarn electron",
+  "verbose": true
+}
