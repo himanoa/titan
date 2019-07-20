@@ -36,13 +36,12 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       resolve: { extensions },
       output: {
         path: path.join(__dirname, "dist"),
-        filename: "renderer.js",
-        libraryTarget: "commonjs2"
+        filename: "renderer.js"
       },
       module: {
         rules: [
           {
-            test: "/.tsx?$/",
+            test: "/.tsx$/",
             exclude: /node_modules/,
             loader: "babel-loader"
           }
