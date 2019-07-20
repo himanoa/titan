@@ -29,7 +29,7 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       }
     },
     {
-      externals: [...Object.keys(dependencies || {})],
+      externals: ["electron"],
       target: "electron-renderer",
       entry: "./src/renderer/index.tsx",
       plugins: rendererPlugin,
@@ -41,7 +41,7 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       module: {
         rules: [
           {
-            test: "/.tsx$/",
+            test: /.tsx$/,
             exclude: /node_modules/,
             loader: "babel-loader"
           }
