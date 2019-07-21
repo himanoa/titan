@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const { dependencies } = require("./package.json");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 const extensions = [".ts", ".tsx", ".json", ".js", ".jsx"];
 const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
@@ -32,7 +33,7 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       externals: ["electron"],
       target: "electron-renderer",
       entry: "./src/renderer/index.tsx",
-      plugins: rendererPlugin,
+      plugins: [new MonacoWebpackPlugin(), ...rendererPlugin],
       resolve: { extensions },
       output: {
         path: path.join(__dirname, "dist"),
@@ -44,6 +45,10 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
             test: /.tsx$/,
             exclude: /node_modules/,
             loader: "babel-loader"
+          },
+          {
+            test: /\.css$/,
+            use: ["style-loader", "css-loader"]
           }
         ]
       }

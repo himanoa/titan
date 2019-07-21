@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef, memo } from "react";
-import { editor } from "monaco-editor";
+import * as monaco from "monaco-editor";
 
 export type Props = {
   language: string;
@@ -9,7 +9,7 @@ export type Props = {
 const Editor: React.FC<Props> = props => {
   const editorRef = useRef<HTMLDivElement>(null as any);
   useLayoutEffect(() => {
-    editor.create(editorRef.current, {
+    monaco.editor.create(editorRef.current, {
       ...props
     });
   });
