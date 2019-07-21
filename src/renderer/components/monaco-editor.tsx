@@ -4,7 +4,7 @@ import * as monaco from "monaco-editor";
 export type Props = {
   language: string;
   value: string;
-};
+} & monaco.editor.IEditorConstructionOptions;
 
 const Editor: React.FC<Props> = props => {
   const editorRef = useRef<HTMLDivElement>(null as any);
