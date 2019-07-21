@@ -32,7 +32,7 @@ const options = {
   fontSize: 16,
   lineNumbers: "off" as "off"
 };
-const Page: React.FC<Props> = props => {
+const Page: React.FC<Props> = () => {
   return (
     <StyledDiv>
       <MonacoEditor
