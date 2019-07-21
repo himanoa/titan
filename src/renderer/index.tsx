@@ -1,7 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import MonacoEditor from "./components/monaco-editor";
 
 const root = document.getElementById("app");
 if (root) {
-  ReactDOM.render(<h1>hello</h1>, root);
+  ReactDOM.render(<MonacoEditor language="markdown" value="" />, root);
 }
