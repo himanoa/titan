@@ -47,6 +47,7 @@
     "eslint-plugin-react": "^7.14.2",
     "eslint-plugin-react-hooks": "^1.6.1",
     "jest": "^24.8.0",
+    "jest-styled-components": "^6.3.3",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "nodemon": "^1.19.1",
     "prettier": "^1.18.2",
