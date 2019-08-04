@@ -33,7 +33,12 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       externals: ["electron"],
       target: "electron-renderer",
       entry: "./src/renderer/index.tsx",
-      plugins: [new MonacoWebpackPlugin(), ...rendererPlugin],
+      plugins: [
+        new MonacoWebpackPlugin({
+          languages: ["markdown"]
+        }),
+        ...rendererPlugin
+      ],
       resolve: { extensions },
       output: {
         path: path.join(__dirname, "dist"),
