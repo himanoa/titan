@@ -1,6 +1,12 @@
-import React, { memo } from "react";
+import React, { memo, useState, useEffect } from "react";
 import styled from "styled-components";
 import MonacoEditor from "react-monaco-editor";
+import { ipcRenderer } from "electron";
+import { FileOpenMessage } from "../../main/message";
+
+ipcRenderer.on("fileOpen", function(args: FileOpenMessage) {
+  console.dir(args.fileBody);
+});
 
 export type Props = {};
 
@@ -33,13 +39,20 @@ const options = {
   lineNumbers: "off" as "off"
 };
 const Page: React.FC<Props> = () => {
+  const [code, setCode] = useState("");
+  useEffect(() => {
+    ipcRenderer.on("fileOpen", (event, args) => {
+      setCode(args.fileBody);
+    });
+  }, []);
   return (
     <StyledDiv>
       <MonacoEditor
         language="markdown"
-        value=""
+        value={code}
         height="100vh"
         options={options}
+        onChange={setCode}
       />
     </StyledDiv>
   );

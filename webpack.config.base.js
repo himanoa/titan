@@ -30,7 +30,7 @@ const createConfig = (mode, mainPlugin, rendererPlugin = []) => {
       }
     },
     {
-      externals: ["electron"],
+      // externals: ["electron"],
       target: "electron-renderer",
       entry: "./src/renderer/index.tsx",
       plugins: [

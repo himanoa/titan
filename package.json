@@ -13,9 +13,9 @@
     "prettie": "prettier --check --config ./.prettierrc '**/*{ts,tsx}'",
     "prettier:fix": "prettier --write --config ./.prettierrc '**/*{ts,tsx}'",
     "tsc:watch": "tsc --watch --noEmit",
-    "build:dev": "webpack --config ./webpack.config.dev.js",
+    "build:dev": "webpack --config ./webpack.config.dev.js --watch",
     "electron": "electron dist/main.js",
-    "start": "yarn build:dev && yarn electron"
+    "start": "yarn electron"
   },
   "dependencies": {
     "electron": "^5.0.7",
