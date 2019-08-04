@@ -1,8 +1,9 @@
-import { dialog, ipcMain, BrowserWindow } from "electron";
+import { dialog, BrowserWindow } from "electron";
 import { promisify } from "util";
 import { readFile } from "fs";
 
 const createMenu = (mainWindow: BrowserWindow) => [
+  {},
   {
     label: "ファイル",
     submenu: [
