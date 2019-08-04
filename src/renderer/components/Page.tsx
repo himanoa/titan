@@ -1,8 +1,8 @@
-import React, { memo, useState, useEffect } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import MonacoEditor from "react-monaco-editor";
 import { ipcRenderer } from "electron";
-import { FileOpenMessage } from "../../main/message";
+import { FileOpenMessage, RequestFileBodyMessage } from "../../main/message";
 
 ipcRenderer.on("fileOpen", function(args: FileOpenMessage) {
   console.dir(args.fileBody);
@@ -41,10 +41,26 @@ const options = {
 const Page: React.FC<Props> = () => {
   const [code, setCode] = useState("");
   useEffect(() => {
-    ipcRenderer.on("fileOpen", (event, args) => {
+    const channel = `request-fileBody`;
+    const handler = (_: unknown, args: RequestFileBodyMessage) => {
+      ipcRenderer.send(`response-fileBody-${args.fileName}`, code);
+    };
+    ipcRenderer.on(channel, handler);
+    return () => {
+      ipcRenderer.removeListener(channel, handler);
+    };
+  }, [code]);
+  useEffect(() => {
+    ipcRenderer.on("fileOpen", (_: unknown, args: FileOpenMessage) => {
       setCode(args.fileBody);
     });
   }, []);
+  const onChange = useCallback(
+    (e: string) => {
+      setCode(() => e);
+    },
+    [code]
+  );
   return (
     <StyledDiv>
       <MonacoEditor
@@ -52,7 +68,7 @@ const Page: React.FC<Props> = () => {
         value={code}
         height="100vh"
         options={options}
-        onChange={setCode}
+        onChange={onChange}
       />
     </StyledDiv>
   );

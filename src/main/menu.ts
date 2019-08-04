@@ -1,9 +1,11 @@
-import { dialog, BrowserWindow } from "electron";
+import { dialog, BrowserWindow, ipcMain } from "electron";
 import { promisify } from "util";
-import { readFile } from "fs";
+import { readFile, writeFile } from "fs";
+
+const read = promisify(readFile);
+const write = promisify(writeFile);
 
 const createMenu = (mainWindow: BrowserWindow) => [
-  {},
   {
     label: "ファイル",
     submenu: [
@@ -18,7 +20,6 @@ const createMenu = (mainWindow: BrowserWindow) => [
               if (filePaths === undefined) {
                 return;
               }
-              const read = promisify(readFile);
               filePaths.forEach(async f => {
                 const fileBody = await read(f, "utf-8");
                 mainWindow.webContents.send("fileOpen", {
@@ -28,6 +29,25 @@ const createMenu = (mainWindow: BrowserWindow) => [
               });
             }
           );
+        }
+      },
+      {
+        label: "保存",
+        click() {
+          dialog.showSaveDialog(mainWindow, {}, fileName => {
+            if (fileName === undefined) {
+              return;
+            }
+            mainWindow.webContents.send("request-fileBody", { fileName });
+            ipcMain.on(
+              `response-fileBody-${fileName}`,
+              async (_: unknown, body: string) => {
+                console.dir(body);
+                console.dir("foobar");
+                await write(fileName, body, "utf-8");
+              }
+            );
+          });
         }
       }
     ]
@@ -39,7 +59,7 @@ const createMenu = (mainWindow: BrowserWindow) => [
         label: "Reload",
         accelerator: "Command+R",
         click: function() {
-          mainWindow.restart();
+          mainWindow.reload();
         }
       },
       {
