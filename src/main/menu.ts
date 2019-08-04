@@ -5,11 +5,29 @@ import { readFile, writeFile } from "fs";
 const read = promisify(readFile);
 const write = promisify(writeFile);
 
+const showSaveDialog = (mainWindow: BrowserWindow) => {
+  dialog.showSaveDialog(mainWindow, {}, fileName => {
+    if (fileName === undefined) {
+      return;
+    }
+    mainWindow.webContents.send("request-fileBody", { fileName });
+    ipcMain.on(
+      `response-fileBody-${fileName}`,
+      async (_: unknown, body: string) => {
+        await write(fileName, body, "utf-8");
+      }
+    );
+  });
+};
+
+let currentFilePath: string;
+
 const createMenu = (mainWindow: BrowserWindow) => [
   {
     label: "ファイル",
     submenu: [
       {
+        accelerator: "Command+O",
         label: "開く",
         click() {
           dialog.showOpenDialog(
@@ -26,28 +44,36 @@ const createMenu = (mainWindow: BrowserWindow) => [
                   name: f,
                   fileBody
                 });
+                currentFilePath = f;
               });
             }
           );
         }
       },
       {
+        accelerator: "Command+S",
         label: "保存",
         click() {
-          dialog.showSaveDialog(mainWindow, {}, fileName => {
-            if (fileName === undefined) {
-              return;
-            }
-            mainWindow.webContents.send("request-fileBody", { fileName });
+          if (currentFilePath) {
+            mainWindow.webContents.send("request-fileBody", {
+              fileName: currentFilePath
+            });
             ipcMain.on(
-              `response-fileBody-${fileName}`,
+              `response-fileBody-${currentFilePath}`,
               async (_: unknown, body: string) => {
-                console.dir(body);
-                console.dir("foobar");
-                await write(fileName, body, "utf-8");
+                await write(currentFilePath, body, "utf-8");
               }
             );
-          });
+            return;
+          }
+          showSaveDialog(mainWindow);
+        }
+      },
+      {
+        accelerator: "Command+Shift+S",
+        label: "保存",
+        click() {
+          showSaveDialog(mainWindow);
         }
       }
     ]

@@ -40,6 +40,7 @@ const options = {
 };
 const Page: React.FC<Props> = () => {
   const [code, setCode] = useState("");
+
   useEffect(() => {
     const channel = `request-fileBody`;
     const handler = (_: unknown, args: RequestFileBodyMessage) => {
@@ -50,11 +51,13 @@ const Page: React.FC<Props> = () => {
       ipcRenderer.removeListener(channel, handler);
     };
   }, [code]);
+
   useEffect(() => {
     ipcRenderer.on("fileOpen", (_: unknown, args: FileOpenMessage) => {
       setCode(args.fileBody);
     });
   }, []);
+
   const onChange = useCallback(
     (e: string) => {
       setCode(() => e);
