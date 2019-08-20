@@ -12,10 +12,12 @@
     "lint:fix": "eslint --fix -c .eslintrc.js 'src/**/*.ts' 'src/**/*.tsx' 'src/*.ts' 'src/*.tsx'",
     "prettie": "prettier --check --config ./.prettierrc '**/*{ts,tsx}'",
     "prettier:fix": "prettier --write --config ./.prettierrc '**/*{ts,tsx}'",
-    "tsc:watch": "tsc --watch --noEmit",
-    "build:dev": "webpack --config ./webpack.config.dev.js --watch",
-    "electron": "electron dist/main.js",
-    "start": "yarn electron"
+    "build:main": "tsc --build ./tsconfig.main.json",
+    "build:renderer": "webpack --config ./webpack.config.dev.js --mode development",
+    "build:watch:main": "tsc --build ./tsconfig.main.json",
+    "build:watch:renderer": "webpack-dev-server --config ./webpack.config.dev.js --mode development",
+    "electron": "electron dist/index.js",
+    "start": "run-p build:watch:*"
   },
   "dependencies": {
     "electron": "^5.0.7",
@@ -51,6 +53,7 @@
     "jest-styled-components": "^6.3.3",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "nodemon": "^1.19.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.18.2",
     "react-monaco-editor": "^0.27.0",
     "style-loader": "^0.23.1",
