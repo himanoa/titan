@@ -1,6 +1,12 @@
-import React, { memo, useState, useEffect, useCallback } from "react";
+import React, {
+  memo,
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect
+} from "react";
 import styled from "styled-components";
-import MonacoEditor from "react-monaco-editor";
+import * as monacoEditor from "monaco-editor/esm/vs/editor/editor.api";
 import { ipcRenderer } from "electron";
 import { FileOpenMessage, RequestFileBodyMessage } from "../../main/message";
 
@@ -14,65 +20,83 @@ const StyledDiv = styled.div`
   position: absolute;
   left: 0;
   top: 0;
-  width: 100vh;
+  width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
   overflow: hidden;
 `;
 
-const options = {
-  scrollbar: {
-    // Subtle shadows to the left & top. Defaults to true.
-    useShadows: false,
-
-    // Render vertical arrows. Defaults to false.
-    verticalHasArrows: false,
-    // Render horizontal arrows. Defaults to false.
-    horizontalHasArrows: false,
-
-    verticalScrollbarSize: 0,
-    horizontalScrollbarSize: 0,
-    arrowSize: 0
-  },
-  fontSize: 16,
-  lineNumbers: "off" as "off"
-};
+interface ResizeObserverEntry {
+  contentRect: {
+    width: number;
+    height: number;
+  };
+}
 const Page: React.FC<Props> = () => {
-  const [code, setCode] = useState("");
+  const divRef = useRef(null);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [editor, setEditor] = useState<monacoEditor.editor.ICodeEditor>(
+    null as any
+  );
 
+  const options: monacoEditor.editor.IEditorConstructionOptions = {
+    language: "markdown",
+    scrollbar: {
+      useShadows: false,
+      verticalHasArrows: false,
+      horizontalHasArrows: false,
+      verticalScrollbarSize: 1,
+      horizontalScrollbarSize: 1,
+      arrowSize: 11
+    },
+    minimap: {
+      enabled: false
+    },
+    fontSize: 16,
+    lineNumbers: "off" as "off"
+  };
   useEffect(() => {
     const channel = `request-fileBody`;
     const handler = (_: unknown, args: RequestFileBodyMessage) => {
-      ipcRenderer.send(`response-fileBody-${args.fileName}`, code);
+      ipcRenderer.send(`response-fileBody-${args.fileName}`, editor.getValue());
     };
     ipcRenderer.on(channel, handler);
     return () => {
       ipcRenderer.removeListener(channel, handler);
     };
-  }, [code]);
+  }, [editor]);
 
   useEffect(() => {
     ipcRenderer.on("fileOpen", (_: unknown, args: FileOpenMessage) => {
-      setCode(args.fileBody);
+      editor.setValue(args.fileBody);
     });
-  }, []);
+    return () => {
+      ipcRenderer.removeAllListeners("fileOpen");
+    };
+  }, [editor]);
 
-  const onChange = useCallback(
-    (e: string) => {
-      setCode(() => e);
-    },
-    [code]
-  );
+  useLayoutEffect(() => {
+    if (editorRef.current && divRef.current) {
+      const editor = monacoEditor.editor.create(editorRef.current, options);
+      const observer = new ResizeObserver((entries: ResizeObserverEntry[]) => {
+        const entry = entries[0];
+        editor.layout({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
+        });
+      });
+      observer.observe(divRef.current);
+      setEditor(editor);
+      return () => {
+        editor.dispose();
+        observer.disconnect();
+      };
+    }
+  }, []);
   return (
-    <StyledDiv>
-      <MonacoEditor
-        language="markdown"
-        value={code}
-        height="100vh"
-        options={options}
-        onChange={onChange}
-      />
+    <StyledDiv ref={divRef}>
+      <div ref={editorRef} />
     </StyledDiv>
   );
 };
