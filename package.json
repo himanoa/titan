@@ -20,7 +20,7 @@
     "start": "run-p build:watch:*"
   },
   "dependencies": {
-    "electron": "^5.0.7",
+    "electron": "^7.2.4",
     "monaco-editor": "^0.17.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
